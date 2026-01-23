@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<VBox xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="com.example.namegame.controller.FillInBlankController"
+      styleClass="root-pane" alignment="CENTER" spacing="20">
+    
+    <padding><Insets topRightBottomLeft="20"/></padding>
+    
+    <!-- Header -->
+    <HBox styleClass="game-header" spacing="20" alignment="CENTER">
+        <Button text="← Home" onAction="#goHome" styleClass="back-button"/>
+        
+        <Region HBox.hgrow="ALWAYS"/>
+        
+        <Label text="Fill in the Blank" styleClass="game-title">
+            <font><Font size="24" name="System Bold"/></font>
+        </Label>
+        
+        <Region HBox.hgrow="ALWAYS"/>
+        
+        <VBox alignment="CENTER_RIGHT" spacing="5">
+            <Label fx:id="scoreLabel" text="Score: 0"/>
+            <Label fx:id="progressLabel" text="Question: 1 / 0"/>
+        </VBox>
+        
+        <Label fx:id="streakLabel" text="" styleClass="streak-label" visible="false"/>
+    </HBox>
+    
+    <!-- Main Content -->
+    <VBox alignment="CENTER" spacing="30" VBox.vgrow="ALWAYS">
+        
+        <Label text="What is this student's name?" styleClass="instruction-label">
+            <font><Font size="18"/></font>
+        </Label>
+        
+        <!-- Student Photo -->
+        <StackPane styleClass="image-frame" alignment="CENTER">
+            <ImageView fx:id="studentImage" fitWidth="300" fitHeight="400" preserveRatio="true"/>
+        </StackPane>
+        
+        <!-- Hint -->
+        <Label fx:id="hintLabel" text="" styleClass="hint-label"/>
+        
+        <!-- Answer Input -->
+        <HBox spacing="15" alignment="CENTER">
+            <TextField fx:id="answerField" promptText="Type the student's name..." 
+                       prefWidth="300" prefHeight="40" styleClass="answer-field"/>
+            <Button fx:id="submitButton" text="Submit" onAction="#submitAnswer"
+                    prefHeight="40" styleClass="submit-button"/>
+        </HBox>
+        
+        <!-- Feedback -->
+        <Label fx:id="feedbackLabel" text="" visible="false" styleClass="feedback-label">
+            <font><Font size="16" name="System Bold"/></font>
+        </Label>
+        
+    </VBox>
+    
+    <!-- Hint -->
+    <HBox alignment="CENTER">
+        <Label text="Press Enter to submit • Start typing to see suggestions" 
+               styleClass="hint-text" style="-fx-text-fill: gray;"/>
+    </HBox>
+    
+</VBox>

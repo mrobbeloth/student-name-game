@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<VBox xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="com.example.namegame.controller.SettingsDialogController"
+      styleClass="dialog-pane" spacing="20" prefWidth="500" prefHeight="200">
+    
+    <padding><Insets topRightBottomLeft="30"/></padding>
+    
+    <Label text="Settings" styleClass="dialog-title">
+        <font><Font size="20" name="System Bold"/></font>
+    </Label>
+    
+    <!-- Images Directory -->
+    <VBox spacing="8">
+        <Label text="Images and Roster Directory:"/>
+        <HBox spacing="10">
+            <TextField fx:id="pathField" HBox.hgrow="ALWAYS" promptText="Select a folder..."/>
+            <Button fx:id="browseButton" text="Browse..." onAction="#browse"/>
+        </HBox>
+    </VBox>
+    
+    <!-- Buttons -->
+    <Region VBox.vgrow="ALWAYS"/>
+    
+    <HBox spacing="10" alignment="CENTER_RIGHT">
+        <Button fx:id="cancelButton" text="Cancel" onAction="#cancel" prefWidth="80"/>
+        <Button fx:id="saveButton" text="Save" onAction="#save" prefWidth="80" styleClass="primary-button"/>
+    </HBox>
+    
+</VBox>

@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<BorderPane xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" 
+            fx:controller="com.example.namegame.controller.MainDashboardController"
+            styleClass="root-pane">
+    
+    <top>
+        <VBox>
+            <MenuBar fx:id="menuBar">
+                <Menu text="File">
+                    <MenuItem text="Settings" onAction="#openSettings" accelerator="Shortcut+,"/>
+                    <SeparatorMenuItem/>
+                    <MenuItem text="Export Data..." onAction="#exportData"/>
+                    <MenuItem text="Import Data..." onAction="#importData"/>
+                    <SeparatorMenuItem/>
+                    <MenuItem text="Exit" onAction="#exitApplication" accelerator="Shortcut+Q"/>
+                </Menu>
+                <Menu text="Game">
+                    <MenuItem text="Reload Images" onAction="#reloadImages" accelerator="R"/>
+                    <MenuItem text="View Unmatched..." onAction="#viewUnmatched"/>
+                    <SeparatorMenuItem/>
+                    <MenuItem text="Reset Statistics..." onAction="#resetStatistics"/>
+                </Menu>
+                <Menu text="Help">
+                    <MenuItem text="Keyboard Shortcuts" onAction="#showKeyboardShortcuts"/>
+                    <SeparatorMenuItem/>
+                    <MenuItem text="About" onAction="#showAbout"/>
+                </Menu>
+            </MenuBar>
+        </VBox>
+    </top>
+    
+    <center>
+        <VBox alignment="CENTER" spacing="30" style="-fx-padding: 40;">
+            
+            <!-- Title -->
+            <Label text="Student Name Game" styleClass="title-label">
+                <font>
+                    <Font size="36" name="System Bold"/>
+                </font>
+            </Label>
+            
+            <Label text="Choose a game mode to start learning!" styleClass="subtitle-label">
+                <font>
+                    <Font size="16"/>
+                </font>
+            </Label>
+            
+            <!-- Game Mode Cards -->
+            <HBox spacing="20" alignment="CENTER">
+                
+                <!-- Matching Card -->
+                <VBox fx:id="matchingCard" styleClass="game-card" alignment="CENTER" spacing="10"
+                      onMouseClicked="#startMatching" prefWidth="200" prefHeight="180">
+                    <padding><Insets topRightBottomLeft="20"/></padding>
+                    <Label text="🎯" style="-fx-font-size: 48px;"/>
+                    <Label text="Matching" styleClass="card-title">
+                        <font><Font size="18" name="System Bold"/></font>
+                    </Label>
+                    <Label text="Match photos to names" styleClass="card-description" wrapText="true" textAlignment="CENTER"/>
+                </VBox>
+                
+                <!-- Multiple Choice Card -->
+                <VBox fx:id="multipleChoiceCard" styleClass="game-card" alignment="CENTER" spacing="10"
+                      onMouseClicked="#startMultipleChoice" prefWidth="200" prefHeight="180">
+                    <padding><Insets topRightBottomLeft="20"/></padding>
+                    <Label text="📝" style="-fx-font-size: 48px;"/>
+                    <Label text="Multiple Choice" styleClass="card-title">
+                        <font><Font size="18" name="System Bold"/></font>
+                    </Label>
+                    <Label text="Pick the correct name" styleClass="card-description" wrapText="true" textAlignment="CENTER"/>
+                </VBox>
+                
+                <!-- Fill in the Blank Card -->
+                <VBox fx:id="fillInBlankCard" styleClass="game-card" alignment="CENTER" spacing="10"
+                      onMouseClicked="#startFillInBlank" prefWidth="200" prefHeight="180">
+                    <padding><Insets topRightBottomLeft="20"/></padding>
+                    <Label text="✏️" style="-fx-font-size: 48px;"/>
+                    <Label text="Fill in the Blank" styleClass="card-title">
+                        <font><Font size="18" name="System Bold"/></font>
+                    </Label>
+                    <Label text="Type the student's name" styleClass="card-description" wrapText="true" textAlignment="CENTER"/>
+                </VBox>
+                
+            </HBox>
+            
+            <!-- Statistics Panel -->
+            <VBox styleClass="stats-panel" spacing="10" alignment="CENTER">
+                <padding><Insets topRightBottomLeft="20"/></padding>
+                
+                <Label text="Lifetime Statistics" styleClass="section-title">
+                    <font><Font size="16" name="System Bold"/></font>
+                </Label>
+                
+                <HBox spacing="30" alignment="CENTER">
+                    <VBox alignment="CENTER" spacing="5">
+                        <Label fx:id="totalMatchesLabel" text="0" styleClass="stat-value"/>
+                        <Label text="Matches" styleClass="stat-label"/>
+                    </VBox>
+                    <VBox alignment="CENTER" spacing="5">
+                        <Label fx:id="totalMissesLabel" text="0" styleClass="stat-value"/>
+                        <Label text="Misses" styleClass="stat-label"/>
+                    </VBox>
+                    <VBox alignment="CENTER" spacing="5">
+                        <Label fx:id="accuracyLabel" text="0%" styleClass="stat-value"/>
+                        <Label text="Accuracy" styleClass="stat-label"/>
+                    </VBox>
+                    <VBox alignment="CENTER" spacing="5">
+                        <Label fx:id="gamesPlayedLabel" text="0" styleClass="stat-value"/>
+                        <Label text="Games" styleClass="stat-label"/>
+                    </VBox>
+                    <VBox alignment="CENTER" spacing="5">
+                        <Label fx:id="bestStreakLabel" text="0" styleClass="stat-value"/>
+                        <Label text="Best Streak" styleClass="stat-label"/>
+                    </VBox>
+                </HBox>
+            </VBox>
+            
+        </VBox>
+    </center>
+    
+    <bottom>
+        <HBox styleClass="status-bar" spacing="20" alignment="CENTER_LEFT">
+            <padding><Insets topRightBottomLeft="10"/></padding>
+            <Label fx:id="studentCountLabel" text="0 students loaded"/>
+            <Label fx:id="unmatchedWarningLabel" text="" visible="false"/>
+            <Region HBox.hgrow="ALWAYS"/>
+            <Button text="Reload" onAction="#reloadImages" styleClass="small-button"/>
+        </HBox>
+    </bottom>
+    
+</BorderPane>

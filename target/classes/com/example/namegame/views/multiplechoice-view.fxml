@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<VBox xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
+      fx:id="rootPane"
+      fx:controller="com.example.namegame.controller.MultipleChoiceController"
+      styleClass="root-pane" alignment="CENTER" spacing="20">
+    
+    <padding><Insets topRightBottomLeft="20"/></padding>
+    
+    <!-- Header -->
+    <HBox styleClass="game-header" spacing="20" alignment="CENTER">
+        <Button text="← Home" onAction="#goHome" styleClass="back-button"/>
+        
+        <Region HBox.hgrow="ALWAYS"/>
+        
+        <Label text="Multiple Choice" styleClass="game-title">
+            <font><Font size="24" name="System Bold"/></font>
+        </Label>
+        
+        <Region HBox.hgrow="ALWAYS"/>
+        
+        <VBox alignment="CENTER_RIGHT" spacing="5">
+            <Label fx:id="scoreLabel" text="Score: 0"/>
+            <Label fx:id="progressLabel" text="Question: 1 / 0"/>
+        </VBox>
+        
+        <Label fx:id="streakLabel" text="" styleClass="streak-label" visible="false"/>
+    </HBox>
+    
+    <!-- Main Content -->
+    <VBox alignment="CENTER" spacing="30" VBox.vgrow="ALWAYS">
+        
+        <Label text="Who is this student?" styleClass="instruction-label">
+            <font><Font size="18"/></font>
+        </Label>
+        
+        <!-- Student Photo -->
+        <StackPane styleClass="image-frame" alignment="CENTER">
+            <ImageView fx:id="studentImage" fitWidth="300" fitHeight="400" preserveRatio="true"/>
+        </StackPane>
+        
+        <!-- Answer Choices -->
+        <GridPane hgap="15" vgap="15" alignment="CENTER">
+            <Button fx:id="choice1" text="1. " prefWidth="250" prefHeight="50" 
+                    styleClass="choice-button" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
+            <Button fx:id="choice2" text="2. " prefWidth="250" prefHeight="50"
+                    styleClass="choice-button" GridPane.columnIndex="1" GridPane.rowIndex="0"/>
+            <Button fx:id="choice3" text="3. " prefWidth="250" prefHeight="50"
+                    styleClass="choice-button" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
+            <Button fx:id="choice4" text="4. " prefWidth="250" prefHeight="50"
+                    styleClass="choice-button" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
+        </GridPane>
+        
+        <!-- Feedback -->
+        <Label fx:id="feedbackLabel" text="" visible="false" styleClass="feedback-label">
+            <font><Font size="16" name="System Bold"/></font>
+        </Label>
+        
+    </VBox>
+    
+    <!-- Hint -->
+    <HBox alignment="CENTER">
+        <Label text="Press 1-4 to select an answer" styleClass="hint-text" style="-fx-text-fill: gray;"/>
+    </HBox>
+    
+</VBox>

@@ -1,0 +1,11 @@
+This file indicates portable mode.
+When present, the application stores all data in the application directory
+instead of the user's home directory (~/.namegame).
+
+Data files stored locally when in portable mode:
+- config.ini - Application settings
+- mappings.json - Manual name-to-image mappings
+- statistics.json - Game statistics and progress
+
+This allows the application to be run from a USB drive or shared folder
+without leaving traces on the host system.

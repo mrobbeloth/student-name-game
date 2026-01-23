@@ -1,0 +1,70 @@
+<assembly xmlns="http://maven.apache.org/ASSEMBLY/2.2.0"
+          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:schemaLocation="http://maven.apache.org/ASSEMBLY/2.2.0 
+                              http://maven.apache.org/xsd/assembly-2.2.0.xsd">
+    
+    <id>portable</id>
+    <formats>
+        <format>zip</format>
+    </formats>
+    <includeBaseDirectory>true</includeBaseDirectory>
+    <baseDirectory>student-name-game</baseDirectory>
+    
+    <!-- Include the shaded JAR -->
+    <files>
+        <file>
+            <source>${project.build.directory}/${project.build.finalName}.jar</source>
+            <destName>student-name-game.jar</destName>
+        </file>
+    </files>
+    
+    <fileSets>
+        <!-- Include launcher scripts -->
+        <fileSet>
+            <directory>src/main/scripts</directory>
+            <outputDirectory>/</outputDirectory>
+            <includes>
+                <include>run.bat</include>
+                <include>run.sh</include>
+            </includes>
+            <fileMode>0755</fileMode>
+        </fileSet>
+        
+        <!-- Include portable marker and README -->
+        <fileSet>
+            <directory>src/main/dist</directory>
+            <outputDirectory>/</outputDirectory>
+            <includes>
+                <include>portable.txt</include>
+                <include>README.txt</include>
+            </includes>
+        </fileSet>
+        
+        <!-- Include sound resources if present -->
+        <fileSet>
+            <directory>src/main/resources/sounds</directory>
+            <outputDirectory>/sounds</outputDirectory>
+            <includes>
+                <include>*.wav</include>
+                <include>*.mp3</include>
+            </includes>
+        </fileSet>
+    </fileSets>
+    
+    <!-- 
+    Note: The JRE/runtime folder must be added manually or via a separate build step.
+    Use jlink to create a custom runtime:
+    
+    jlink \
+        - -module-path $JAVA_HOME/jmods \
+        - -add-modules java.base,java.desktop,java.logging,java.naming,java.sql,java.xml,jdk.unsupported \
+        - -output runtime \
+        - -strip-debug \
+        - -compress=2 \
+        - -no-header-files \
+        - -no-man-pages
+    
+    Then add the runtime folder to the distribution.
+    -->
+    
+</assembly>
