@@ -2,6 +2,8 @@
 
 This document provides comprehensive instructions for building the Student Name Game application.
 
+> **Version Management**: The project version is centrally managed in [pom.xml](pom.xml). All references to `[VERSION]` in this document should be replaced with the current version from pom.xml (currently 1.0.1). The GitHub Actions workflow automatically extracts the version from pom.xml.
+
 ## Prerequisites
 
 - **JDK 21** or later (with JavaFX support)
@@ -73,7 +75,7 @@ mvn clean compile
 # Create shaded (fat) JAR with all dependencies
 mvn clean package -DskipTests
 
-# Output: target/student-name-game-1.0.0-SNAPSHOT-shaded.jar
+# Output: target/student-name-game-[VERSION]-SNAPSHOT-shaded.jar
 ```
 
 ### Portable Distribution
@@ -82,7 +84,7 @@ mvn clean package -DskipTests
 # Create portable ZIP distribution
 mvn clean package assembly:single -DskipTests
 
-# Output: target/student-name-game-1.0.0-SNAPSHOT-portable.zip
+# Output: target/student-name-game-[VERSION]-SNAPSHOT-portable.zip
 ```
 
 ## Platform-Specific Builds
@@ -125,10 +127,10 @@ mvn clean package -Pwindows -DskipTests
 jpackage ^
     --type msi ^
     --input target ^
-    --main-jar student-name-game-1.0.0-SNAPSHOT-shaded.jar ^
+    --main-jar student-name-game-[VERSION]-SNAPSHOT-shaded.jar ^
     --main-class com.example.namegame.Launcher ^
     --name "Student Name Game" ^
-    --app-version 1.0.0 ^
+    --app-version [VERSION] ^
     --vendor "Your Organization" ^
     --win-menu ^
     --win-shortcut ^
@@ -144,10 +146,10 @@ mvn clean package -Pmacos -DskipTests
 jpackage \
     --type dmg \
     --input target \
-    --main-jar student-name-game-1.0.0-SNAPSHOT-shaded.jar \
+    --main-jar student-name-game-[VERSION]-SNAPSHOT-shaded.jar \
     --main-class com.example.namegame.Launcher \
     --name "Student Name Game" \
-    --app-version 1.0.0 \
+    --app-version [VERSION] \
     --vendor "Your Organization" \
     --mac-package-name "StudentNameGame" \
     --dest target/installer
@@ -162,10 +164,10 @@ mvn clean package -Plinux -DskipTests
 jpackage \
     --type deb \
     --input target \
-    --main-jar student-name-game-1.0.0-SNAPSHOT-shaded.jar \
+    --main-jar student-name-game-[VERSION]-SNAPSHOT-shaded.jar \
     --main-class com.example.namegame.Launcher \
     --name "student-name-game" \
-    --app-version 1.0.0 \
+    --app-version [VERSION] \
     --vendor "Your Organization" \
     --linux-shortcut \
     --dest target/installer

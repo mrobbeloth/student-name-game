@@ -33,6 +33,14 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v4
       
+    - name: Extract version from pom.xml
+      id: version
+      run: |
+        VERSION=$(grep -oP '<version>\K[^<]+' pom.xml | head -1)
+        echo "version=$VERSION" >> $GITHUB_OUTPUT
+        echo "Version: $VERSION"
+      shell: bash
+      
     - name: Set up JDK 21
       uses: actions/setup-java@v4
       with:
@@ -102,7 +110,7 @@ jobs:
       if: matrix.os != 'windows-latest'
       run: |
         mkdir -p dist/student-name-game
-        cp target/student-name-game-1.0.0.jar dist/student-name-game/student-name-game.jar
+        cp target/student-name-game-${{ steps.version.outputs.version }}.jar dist/student-name-game/student-name-game.jar
         cp src/main/scripts/run.bat dist/student-name-game/ 2>/dev/null || true
         cp src/main/scripts/run.sh dist/student-name-game/ 2>/dev/null || true
         chmod +x dist/student-name-game/run.sh 2>/dev/null || true
@@ -115,7 +123,7 @@ jobs:
       if: matrix.os == 'windows-latest'
       run: |
         New-Item -ItemType Directory -Path "dist/student-name-game" -Force
-        Copy-Item "target/student-name-game-1.0.0.jar" "dist/student-name-game/student-name-game.jar"
+        Copy-Item "target/student-name-game-${{ steps.version.outputs.version }}.jar" "dist/student-name-game/student-name-game.jar"
         Copy-Item "src/main/scripts/run.bat" "dist/student-name-game/" -ErrorAction SilentlyContinue
         Copy-Item "src/main/scripts/run.sh" "dist/student-name-game/" -ErrorAction SilentlyContinue
         Copy-Item "src/main/dist/portable.txt" "dist/student-name-game/" -ErrorAction SilentlyContinue
@@ -142,10 +150,10 @@ jobs:
         jpackage \
           --type deb \
           --input target \
-          --main-jar student-name-game-1.0.0.jar \
+          --main-jar student-name-game-${{ steps.version.outputs.version }}.jar \
           --main-class com.example.namegame.NameGameApplication \
           --name "student-name-game" \
-          --app-version 1.0.0 \
+          --app-version ${{ steps.version.outputs.version }} \
           --vendor "Student Name Game" \
           --linux-shortcut \
           --dest target/installer
@@ -158,10 +166,10 @@ jobs:
         jpackage `
           --type msi `
           --input target `
-          --main-jar student-name-game-1.0.0.jar `
+          --main-jar student-name-game-${{ steps.version.outputs.version }}.jar `
           --main-class com.example.namegame.NameGameApplication `
           --name "Student Name Game" `
-          --app-version "1.0.0" `
+          --app-version "${{ steps.version.outputs.version }}" `
           --vendor "Student Name Game" `
           --win-menu `
           --win-shortcut `
@@ -175,10 +183,10 @@ jobs:
         jpackage \
           --type dmg \
           --input target \
-          --main-jar student-name-game-1.0.0.jar \
+          --main-jar student-name-game-${{ steps.version.outputs.version }}.jar \
           --main-class com.example.namegame.NameGameApplication \
           --name "Student Name Game" \
-          --app-version 1.0.0 \
+          --app-version ${{ steps.version.outputs.version }} \
           --vendor "Student Name Game" \
           --mac-package-name "StudentNameGame" \
           --dest target/installer
