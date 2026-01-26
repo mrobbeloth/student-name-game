@@ -44,16 +44,16 @@ jobs:
       shell: pwsh
       
     - name: Build with Maven
-      run: mvn clean package -DskipTests
+      run: ./mvnw clean package -DskipTests -DskipNativePackage
       
     - name: Run tests
-      run: mvn test
+      run: ./mvnw test
       
     - name: Create custom JRE with jlink
       run: |
         jlink \
           --module-path $JAVA_HOME/jmods \
-          --add-modules java.base,java.desktop,java.logging,java.naming,java.sql,java.xml,jdk.unsupported \
+          --add-modules java.base,java.desktop,java.logging,java.naming,java.sql,java.xml,java.scripting,java.prefs,jdk.unsupported,jdk.crypto.ec \
           --output runtime \
           --strip-debug \
           --compress=2 \
@@ -64,7 +64,7 @@ jobs:
     - name: Create portable distribution
       run: |
         mkdir -p dist/student-name-game
-        cp target/student-name-game-*-shaded.jar dist/student-name-game/student-name-game.jar
+        cp target/student-name-game-1.0.0.jar dist/student-name-game/student-name-game.jar
         cp src/main/scripts/run.bat dist/student-name-game/ || true
         cp src/main/scripts/run.sh dist/student-name-game/ || true
         chmod +x dist/student-name-game/run.sh || true
@@ -85,10 +85,10 @@ jobs:
         jpackage \
           --type deb \
           --input target \
-          --main-jar student-name-game-*-shaded.jar \
-          --main-class com.example.namegame.Launcher \
+          --main-jar student-name-game-1.0.0.jar \
+          --main-class com.example.namegame.NameGameApplication \
           --name "student-name-game" \
-          --app-version ${GITHUB_REF_NAME#v} \
+          --app-version 1.0.0 \
           --vendor "Student Name Game" \
           --linux-shortcut \
           --dest target/installer
@@ -101,10 +101,10 @@ jobs:
         jpackage `
           --type msi `
           --input target `
-          --main-jar (Get-ChildItem target/student-name-game-*-shaded.jar).Name `
-          --main-class com.example.namegame.Launcher `
+          --main-jar student-name-game-1.0.0.jar `
+          --main-class com.example.namegame.NameGameApplication `
           --name "Student Name Game" `
-          --app-version "$($env:GITHUB_REF_NAME -replace 'v','')" `
+          --app-version "1.0.0" `
           --vendor "Student Name Game" `
           --win-menu `
           --win-shortcut `
@@ -118,10 +118,10 @@ jobs:
         jpackage \
           --type dmg \
           --input target \
-          --main-jar student-name-game-*-shaded.jar \
-          --main-class com.example.namegame.Launcher \
+          --main-jar student-name-game-1.0.0.jar \
+          --main-class com.example.namegame.NameGameApplication \
           --name "Student Name Game" \
-          --app-version ${GITHUB_REF_NAME#v} \
+          --app-version 1.0.0 \
           --vendor "Student Name Game" \
           --mac-package-name "StudentNameGame" \
           --dest target/installer

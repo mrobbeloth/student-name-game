@@ -71,7 +71,7 @@
             <configuration>
               <transformers>
                 <transformer>
-                  <mainClass>com.example.namegame.Launcher</mainClass>
+                  <mainClass>com.example.namegame.NameGameApplication</mainClass>
                 </transformer>
                 <transformer />
               </transformers>
@@ -137,6 +137,7 @@
     <commons.text.version>1.11.0</commons.text.version>
     <poi.version>5.4.0</poi.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <skipNativePackage>false</skipNativePackage>
     <javafx.version>21.0.2</javafx.version>
   </properties>
 </project>

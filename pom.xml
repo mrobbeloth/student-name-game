@@ -21,6 +21,7 @@
         <ini4j.version>0.5.4</ini4j.version>
         <commons.text.version>1.11.0</commons.text.version>
         <main.class>com.example.namegame.NameGameApplication</main.class>
+        <skipNativePackage>false</skipNativePackage>
     </properties>
 
     <dependencies>
@@ -153,7 +154,7 @@
                         <configuration>
                             <transformers>
                                 <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
-                                    <mainClass>com.example.namegame.Launcher</mainClass>
+                                    <mainClass>com.example.namegame.NameGameApplication</mainClass>
                                 </transformer>
                                 <transformer implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer"/>
                             </transformers>
