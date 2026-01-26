@@ -22,6 +22,7 @@ A JavaFX 21 cross-platform desktop application for learning student names throug
 ### Requirements
 - **Operating System**: Windows 10+, macOS 10.14+, or Linux (Ubuntu 18.04+)
 - **No additional software required** - Java runtime is bundled with installers
+- **Data Directory** - a directory containing pictures (preferably headshots) and an Excel spreadsheet containing a roster in lastname,firstname format with a header column that says **Name**.
 
 ### Option 1: Platform Installers (Recommended)
 
