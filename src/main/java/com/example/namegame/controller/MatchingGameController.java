@@ -2,14 +2,18 @@ package com.example.namegame.controller;
 
 import com.example.namegame.model.Student;
 import com.example.namegame.util.AnimationFactory;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
 
 import java.io.FileInputStream;
 import java.util.*;
@@ -32,15 +36,203 @@ public class MatchingGameController extends GameControllerBase {
     private Button selectedNameButton = null;
     private int matchesFound = 0;
     
+    // Scaling variables
+    private static final double BASE_WIDTH = 1200.0; // Reference window width
+    private static final double BASE_HEIGHT = 800.0; // Reference window height
+    private static final double BASE_IMAGE_SIZE = 100.0;
+    private static final double BASE_BUTTON_WIDTH = 120.0;
+    private static final double BASE_BUTTON_HEIGHT = 140.0;
+    private static final double BASE_NAME_WIDTH = 150.0;
+    private static final double BASE_NAME_HEIGHT = 40.0;
+    private double currentScaleFactor = 1.0;
+    
     @FXML
     public void initialize() {
-        // Will be called after FXML loads
+        // Initialize scaling when the scene is available
+        if (imagePane != null) {
+            imagePane.sceneProperty().addListener((observable, oldScene, newScene) -> {
+                if (newScene != null) {
+                    setupWindowResizeListener();
+                }
+            });
+        }
     }
     
     @Override
     protected void initializeGame() {
         super.initializeGame();
         setupMatchingGrid();
+    }
+    
+    /**
+     * Sets up window resize listener for responsive scaling
+     */
+    private void setupWindowResizeListener() {
+        if (imagePane.getScene() != null && imagePane.getScene().getWindow() != null) {
+            ChangeListener<Number> resizeListener = new ChangeListener<Number>() {
+                @Override
+                public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
+                    updateScaling();
+                }
+            };
+            
+            imagePane.getScene().getWindow().widthProperty().addListener(resizeListener);
+            imagePane.getScene().getWindow().heightProperty().addListener(resizeListener);
+            
+            // Initial scaling
+            updateScaling();
+        }
+    }
+    
+    /**
+     * Updates scaling based on current window size
+     */
+    private void updateScaling() {
+        if (imagePane.getScene() == null || imagePane.getScene().getWindow() == null) {
+            return;
+        }
+        
+        double windowWidth = imagePane.getScene().getWindow().getWidth();
+        double windowHeight = imagePane.getScene().getWindow().getHeight();
+        
+        // Calculate scale factors based on both width and height, use the smaller one
+        double widthScale = windowWidth / BASE_WIDTH;
+        double heightScale = windowHeight / BASE_HEIGHT;
+        currentScaleFactor = Math.min(widthScale, heightScale);
+        
+        // Ensure minimum scale factor
+        currentScaleFactor = Math.max(currentScaleFactor, 0.5);
+        
+        // Apply scaling to all elements
+        scaleAllElements();
+    }
+    
+    /**
+     * Applies scaling to all UI elements
+     */
+    private void scaleAllElements() {
+        // Scale image buttons
+        for (Button button : imageButtons.keySet()) {
+            scaleImageButton(button);
+        }
+        
+        // Scale name buttons
+        for (Button button : nameButtons.keySet()) {
+            scaleNameButton(button);
+        }
+        
+        // Scale scroll panes
+        scaleScrollPanes();
+        
+        // Scale labels and text
+        scaleLabelsAndText();
+    }
+    
+    /**
+     * Scales an image button and its contents
+     */
+    private void scaleImageButton(Button button) {
+        double scaledWidth = BASE_BUTTON_WIDTH * currentScaleFactor;
+        double scaledHeight = BASE_BUTTON_HEIGHT * currentScaleFactor;
+        double scaledImageSize = BASE_IMAGE_SIZE * currentScaleFactor;
+        
+        button.setPrefSize(scaledWidth, scaledHeight);
+        button.setMinSize(scaledWidth, scaledHeight);
+        
+        // Scale the image inside
+        if (button.getGraphic() instanceof ImageView imageView) {
+            imageView.setFitWidth(scaledImageSize);
+            imageView.setFitHeight(scaledImageSize);
+        }
+    }
+    
+    /**
+     * Scales a name button
+     */
+    private void scaleNameButton(Button button) {
+        double scaledWidth = BASE_NAME_WIDTH * currentScaleFactor;
+        double scaledHeight = BASE_NAME_HEIGHT * currentScaleFactor;
+        
+        button.setPrefSize(scaledWidth, scaledHeight);
+        button.setMinWidth(scaledWidth);
+        
+        // Scale font size
+        Font currentFont = button.getFont();
+        double baseFontSize = 12.0;
+        double scaledFontSize = baseFontSize * currentScaleFactor;
+        scaledFontSize = Math.max(scaledFontSize, 8.0); // Minimum font size
+        button.setFont(Font.font(currentFont.getFamily(), scaledFontSize));
+    }
+    
+    /**
+     * Scales scroll panes
+     */
+    private void scaleScrollPanes() {
+        double baseScrollHeight = 400.0;
+        double scaledScrollHeight = baseScrollHeight * currentScaleFactor;
+        
+        // Find scroll panes in the UI tree
+        scaleScrollPanesRecursive(imagePane.getParent());
+    }
+    
+    /**
+     * Recursively finds and scales scroll panes
+     */
+    private void scaleScrollPanesRecursive(Node node) {
+        if (node instanceof ScrollPane scrollPane) {
+            double baseScrollHeight = 400.0;
+            double scaledScrollHeight = baseScrollHeight * currentScaleFactor;
+            scrollPane.setPrefHeight(scaledScrollHeight);
+        } else if (node instanceof Pane pane) {
+            for (Node child : pane.getChildren()) {
+                scaleScrollPanesRecursive(child);
+            }
+        }
+    }
+    
+    /**
+     * Scales labels and text elements
+     */
+    private void scaleLabelsAndText() {
+        // Scale flow pane gaps
+        double baseGap = 10.0;
+        double scaledGap = baseGap * currentScaleFactor;
+        imagePane.setHgap(scaledGap);
+        imagePane.setVgap(scaledGap);
+        namePane.setHgap(scaledGap);
+        namePane.setVgap(scaledGap);
+        
+        // Scale wrap lengths
+        double baseImageWrap = 400.0;
+        double baseNameWrap = 300.0;
+        imagePane.setPrefWrapLength(baseImageWrap * currentScaleFactor);
+        namePane.setPrefWrapLength(baseNameWrap * currentScaleFactor);
+        
+        // Scale labels in header
+        scaleLabelsRecursive(scoreLabel);
+        scaleLabelsRecursive(progressLabel);
+        scaleLabelsRecursive(streakLabel);
+    }
+    
+    /**
+     * Scales individual labels
+     */
+    private void scaleLabelsRecursive(Node node) {
+        if (node instanceof Label label) {
+            Font currentFont = label.getFont();
+            double baseFontSize = 14.0;
+            if (label.getStyleClass().contains("game-title")) {
+                baseFontSize = 24.0;
+            } else if (label.getStyleClass().contains("section-label")) {
+                baseFontSize = 16.0;
+            } else if (label.getStyleClass().contains("instruction-label")) {
+                baseFontSize = 14.0;
+            }
+            
+            double scaledFontSize = baseFontSize * currentScaleFactor;
+            scaledFontSize = Math.max(scaledFontSize, 8.0); // Minimum font size
+            label.setFont(Font.font(currentFont.getFamily(), scaledFontSize));
+        }
     }
     
     private void setupMatchingGrid() {
@@ -72,19 +264,26 @@ public class MatchingGameController extends GameControllerBase {
         }
         
         updateScoreDisplay();
+        
+        // Apply initial scaling if window is available
+        javafx.application.Platform.runLater(() -> {
+            if (imagePane.getScene() != null && imagePane.getScene().getWindow() != null) {
+                updateScaling();
+            }
+        });
     }
     
     private Button createImageButton(Student student) {
         Button btn = new Button();
-        btn.setPrefSize(120, 140);
-        btn.setMinSize(120, 140);
+        btn.setPrefSize(BASE_BUTTON_WIDTH, BASE_BUTTON_HEIGHT);
+        btn.setMinSize(BASE_BUTTON_WIDTH, BASE_BUTTON_HEIGHT);
         btn.getStyleClass().add("image-card");
         
         try {
-            Image image = new Image(new FileInputStream(student.imagePath().toFile()), 100, 120, true, true);
+            Image image = new Image(new FileInputStream(student.imagePath().toFile()), BASE_IMAGE_SIZE, BASE_IMAGE_SIZE, true, true);
             ImageView imageView = new ImageView(image);
-            imageView.setFitWidth(100);
-            imageView.setFitHeight(120);
+            imageView.setFitWidth(BASE_IMAGE_SIZE);
+            imageView.setFitHeight(BASE_IMAGE_SIZE);
             imageView.setPreserveRatio(true);
             btn.setGraphic(imageView);
         } catch (Exception e) {
@@ -97,8 +296,8 @@ public class MatchingGameController extends GameControllerBase {
     
     private Button createNameButton(Student student) {
         Button btn = new Button(student.displayName());
-        btn.setPrefSize(150, 40);
-        btn.setMinWidth(150);
+        btn.setPrefSize(BASE_NAME_WIDTH, BASE_NAME_HEIGHT);
+        btn.setMinWidth(BASE_NAME_WIDTH);
         btn.getStyleClass().add("name-card");
         btn.setWrapText(true);
         
