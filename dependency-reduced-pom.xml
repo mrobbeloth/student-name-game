@@ -132,10 +132,9 @@
   <properties>
     <main.class>com.example.namegame.NameGameApplication</main.class>
     <maven.compiler.source>21</maven.compiler.source>
-    <ini4j.version>0.5.4</ini4j.version>
     <maven.compiler.target>21</maven.compiler.target>
-    <commons.text.version>1.11.0</commons.text.version>
-    <poi.version>5.4.0</poi.version>
+    <commons.text.version>1.15.0</commons.text.version>
+    <poi.version>5.5.1</poi.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <skipNativePackage>false</skipNativePackage>
     <javafx.version>21.0.2</javafx.version>

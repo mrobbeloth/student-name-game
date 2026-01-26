@@ -1,20 +1,19 @@
 package com.example.namegame.service;
 
-import org.ini4j.Ini;
-import org.ini4j.Profile.Section;
-
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Properties;
 
 /**
- * Manages application configuration stored in an INI file.
+ * Manages application configuration stored in a properties file.
  * Supports both installed mode (~/.namegame/) and portable mode (./data/).
  */
 public class ConfigService {
-    private static final String CONFIG_FILE = "config.ini";
+    private static final String CONFIG_FILE = "config.properties";
     private static final String PORTABLE_MARKER = "portable.txt";
-    private static final String SECTION_GENERAL = "General";
     private static final String KEY_IMAGES_DIRECTORY = "images.directory";
     private static final String KEY_FIRST_LAUNCH = "first.launch";
     
@@ -22,11 +21,12 @@ public class ConfigService {
     
     private final Path dataDirectory;
     private final Path configPath;
-    private Ini ini;
+    private Properties properties;
     
     private ConfigService() {
         this.dataDirectory = determineDataDirectory();
         this.configPath = dataDirectory.resolve(CONFIG_FILE);
+        this.properties = new Properties();
         ensureDirectoryExists();
         loadOrCreateConfig();
     }
@@ -94,22 +94,25 @@ public class ConfigService {
     private void loadOrCreateConfig() {
         try {
             if (Files.exists(configPath)) {
-                ini = new Ini(configPath.toFile());
+                try (InputStream input = Files.newInputStream(configPath)) {
+                    properties.load(input);
+                }
             } else {
-                ini = new Ini();
-                Section section = ini.add(SECTION_GENERAL);
-                section.put(KEY_FIRST_LAUNCH, "true");
-                section.put(KEY_IMAGES_DIRECTORY, "");
+                // Set default values
+                properties.setProperty(KEY_FIRST_LAUNCH, "true");
+                properties.setProperty(KEY_IMAGES_DIRECTORY, "");
                 save();
             }
         } catch (IOException e) {
             throw new RuntimeException("Failed to load configuration", e);
         }
     }
-    
+
     private void save() {
         try {
-            ini.store(configPath.toFile());
+            try (OutputStream output = Files.newOutputStream(configPath)) {
+                properties.store(output, "Student Name Game Configuration");
+            }
         } catch (IOException e) {
             throw new RuntimeException("Failed to save configuration", e);
         }
@@ -120,34 +123,22 @@ public class ConfigService {
     }
     
     public boolean isFirstLaunch() {
-        Section section = ini.get(SECTION_GENERAL);
-        if (section == null) return true;
-        String value = section.get(KEY_FIRST_LAUNCH);
+        String value = properties.getProperty(KEY_FIRST_LAUNCH);
         return value == null || Boolean.parseBoolean(value);
     }
     
     public void markFirstLaunchComplete() {
-        Section section = ini.get(SECTION_GENERAL);
-        if (section == null) {
-            section = ini.add(SECTION_GENERAL);
-        }
-        section.put(KEY_FIRST_LAUNCH, "false");
+        properties.setProperty(KEY_FIRST_LAUNCH, "false");
         save();
     }
     
     public Path getImagesDirectory() {
-        Section section = ini.get(SECTION_GENERAL);
-        if (section == null) return null;
-        String path = section.get(KEY_IMAGES_DIRECTORY);
+        String path = properties.getProperty(KEY_IMAGES_DIRECTORY);
         return (path == null || path.isEmpty()) ? null : Path.of(path);
     }
     
     public void setImagesDirectory(Path directory) {
-        Section section = ini.get(SECTION_GENERAL);
-        if (section == null) {
-            section = ini.add(SECTION_GENERAL);
-        }
-        section.put(KEY_IMAGES_DIRECTORY, directory.toString());
+        properties.setProperty(KEY_IMAGES_DIRECTORY, directory.toString());
         save();
     }
     

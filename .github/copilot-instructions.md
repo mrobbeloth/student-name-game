@@ -7,8 +7,7 @@ A JavaFX 21 cross-platform desktop application for learning student names throug
 - Java 21
 - JavaFX 21 (controls, fxml, media)
 - Apache POI 5.5.1 (Excel .xls/.xlsx parsing)
-- ini4j 0.5.4 (configuration)
-- Apache Commons Text 1.11.0 (Levenshtein distance)
+- Apache Commons Text 1.15.0 (Levenshtein distance)
 - Maven (build system)
 
 ## Architecture

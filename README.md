@@ -159,10 +159,9 @@ src/main/
 
 - **Java 21 LTS** - Latest Java features (records, pattern matching, virtual threads)
 - **JavaFX 21** - Modern desktop UI framework
-- **Apache POI 5.2.5** - Excel file processing (`.xls`/`.xlsx`)
-- **Apache Commons Text 1.11.0** - String utilities (Levenshtein distance)
-- **Gson 2.10.1** - JSON serialization
-- **ini4j 0.5.4** - Configuration management
+- **Apache POI 5.5.1** - Excel file processing (`.xls`/`.xlsx`)
+- **Apache Commons Text 1.15.0** - String utilities (Levenshtein distance)
+- **Gson 2.13.2** - JSON serialization
 - **Maven** - Build system and dependency management
 
 ### IDE Configuration
