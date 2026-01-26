@@ -2,18 +2,22 @@ package com.example.namegame.controller;
 
 import com.example.namegame.model.Student;
 import com.example.namegame.util.AnimationFactory;
+import javafx.animation.FadeTransition;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
+import javafx.geometry.Bounds;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
+import javafx.util.Duration;
 
 import java.io.FileInputStream;
 import java.util.*;
@@ -46,13 +50,25 @@ public class MatchingGameController extends GameControllerBase {
     private static final double BASE_NAME_HEIGHT = 40.0;
     private double currentScaleFactor = 1.0;
     
+    // Hover preview variables
+    private static final double PREVIEW_IMAGE_SIZE = 200.0; // Base size for preview
+    private Pane hoverPreviewPane;
+    private ImageView hoverPreviewImage;
+    private FadeTransition fadeInTransition;
+    private FadeTransition fadeOutTransition;
+    
     @FXML
     public void initialize() {
+        // Initialize hover preview system
+        setupHoverPreview();
+        
         // Initialize scaling when the scene is available
         if (imagePane != null) {
             imagePane.sceneProperty().addListener((observable, oldScene, newScene) -> {
                 if (newScene != null) {
                     setupWindowResizeListener();
+                    // Add the hover preview to the scene root after scene is available
+                    addHoverPreviewToScene();
                 }
             });
         }
@@ -105,6 +121,56 @@ public class MatchingGameController extends GameControllerBase {
         
         // Apply scaling to all elements
         scaleAllElements();
+    }
+    
+    /**
+     * Sets up the hover preview system
+     */
+    private void setupHoverPreview() {
+        // Create preview pane
+        hoverPreviewPane = new Pane();
+        hoverPreviewPane.setVisible(false);
+        hoverPreviewPane.setMouseTransparent(true);
+        hoverPreviewPane.getStyleClass().add("hover-preview-pane");
+        
+        // Create preview image
+        hoverPreviewImage = new ImageView();
+        hoverPreviewImage.setPreserveRatio(true);
+        hoverPreviewImage.setSmooth(true);
+        hoverPreviewImage.getStyleClass().add("hover-preview-image");
+        
+        // Style the preview pane
+        hoverPreviewPane.setStyle(
+            "-fx-background-color: white;" +
+            "-fx-border-color: #3498db;" +
+            "-fx-border-width: 2;" +
+            "-fx-border-radius: 10;" +
+            "-fx-background-radius: 10;" +
+            "-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.3), 15, 0, 0, 5);"
+        );
+        
+        hoverPreviewPane.getChildren().add(hoverPreviewImage);
+        
+        // Setup animations
+        fadeInTransition = new FadeTransition(Duration.millis(200), hoverPreviewPane);
+        fadeInTransition.setFromValue(0.0);
+        fadeInTransition.setToValue(1.0);
+        
+        fadeOutTransition = new FadeTransition(Duration.millis(150), hoverPreviewPane);
+        fadeOutTransition.setFromValue(1.0);
+        fadeOutTransition.setToValue(0.0);
+        fadeOutTransition.setOnFinished(e -> hoverPreviewPane.setVisible(false));
+    }
+    
+    /**
+     * Adds the hover preview to the scene root
+     */
+    private void addHoverPreviewToScene() {
+        if (imagePane.getScene() != null && imagePane.getScene().getRoot() instanceof Pane rootPane) {
+            if (!rootPane.getChildren().contains(hoverPreviewPane)) {
+                rootPane.getChildren().add(hoverPreviewPane);
+            }
+        }
     }
     
     /**
@@ -286,6 +352,10 @@ public class MatchingGameController extends GameControllerBase {
             imageView.setFitHeight(BASE_IMAGE_SIZE);
             imageView.setPreserveRatio(true);
             btn.setGraphic(imageView);
+            
+            // Add hover preview functionality
+            setupImageHoverPreview(btn, student);
+            
         } catch (Exception e) {
             btn.setText("?");
         }
@@ -303,6 +373,108 @@ public class MatchingGameController extends GameControllerBase {
         
         btn.setOnAction(e -> selectName(btn));
         return btn;
+    }
+    
+    /**
+     * Sets up hover preview for an image button
+     */
+    private void setupImageHoverPreview(Button button, Student student) {
+        button.setOnMouseEntered(e -> showHoverPreview(e, student));
+        button.setOnMouseExited(e -> hideHoverPreview());
+        button.setOnMouseMoved(e -> updateHoverPreviewPosition(e));
+    }
+    
+    /**
+     * Shows the hover preview with the student's image
+     */
+    private void showHoverPreview(MouseEvent event, Student student) {
+        if (hoverPreviewPane == null || hoverPreviewImage == null) {
+            return;
+        }
+        
+        try {
+            // Load a larger version of the image for preview
+            double previewSize = PREVIEW_IMAGE_SIZE * currentScaleFactor;
+            Image previewImage = new Image(new FileInputStream(student.imagePath().toFile()), 
+                                         previewSize, previewSize, true, true);
+            hoverPreviewImage.setImage(previewImage);
+            hoverPreviewImage.setFitWidth(previewSize);
+            hoverPreviewImage.setFitHeight(previewSize);
+            
+            // Size the preview pane to fit the image with padding
+            double padding = 10 * currentScaleFactor;
+            hoverPreviewPane.setPrefWidth(previewSize + padding * 2);
+            hoverPreviewPane.setPrefHeight(previewSize + padding * 2);
+            hoverPreviewImage.setLayoutX(padding);
+            hoverPreviewImage.setLayoutY(padding);
+            
+            // Position and show the preview
+            updateHoverPreviewPosition(event);
+            
+            // Stop any ongoing fade out and start fade in
+            fadeOutTransition.stop();
+            hoverPreviewPane.setVisible(true);
+            fadeInTransition.play();
+            
+        } catch (Exception ex) {
+            // If image loading fails, don't show preview
+            hideHoverPreview();
+        }
+    }
+    
+    /**
+     * Updates the position of the hover preview based on mouse position
+     */
+    private void updateHoverPreviewPosition(MouseEvent event) {
+        if (hoverPreviewPane == null || !hoverPreviewPane.isVisible() || imagePane.getScene() == null) {
+            return;
+        }
+        
+        // Get mouse position in scene coordinates
+        double mouseX = event.getSceneX();
+        double mouseY = event.getSceneY();
+        
+        // Get scene dimensions
+        double sceneWidth = imagePane.getScene().getWidth();
+        double sceneHeight = imagePane.getScene().getHeight();
+        
+        // Calculate preview position with offset from cursor
+        double offsetX = 20 * currentScaleFactor;
+        double offsetY = 10 * currentScaleFactor;
+        
+        double previewX = mouseX + offsetX;
+        double previewY = mouseY + offsetY;
+        
+        // Check if preview would go off-screen and adjust position
+        double previewWidth = hoverPreviewPane.getPrefWidth();
+        double previewHeight = hoverPreviewPane.getPrefHeight();
+        
+        // Adjust X position if it would go off the right edge
+        if (previewX + previewWidth > sceneWidth) {
+            previewX = mouseX - previewWidth - offsetX;
+        }
+        
+        // Adjust Y position if it would go off the bottom edge
+        if (previewY + previewHeight > sceneHeight) {
+            previewY = mouseY - previewHeight - offsetY;
+        }
+        
+        // Ensure preview doesn't go off the left or top edges
+        previewX = Math.max(10, previewX);
+        previewY = Math.max(10, previewY);
+        
+        hoverPreviewPane.setLayoutX(previewX);
+        hoverPreviewPane.setLayoutY(previewY);
+    }
+    
+    /**
+     * Hides the hover preview
+     */
+    private void hideHoverPreview() {
+        if (hoverPreviewPane != null && hoverPreviewPane.isVisible()) {
+            fadeInTransition.stop();
+            fadeOutTransition.play();
+        }
     }
     
     private void selectImage(Button btn) {
