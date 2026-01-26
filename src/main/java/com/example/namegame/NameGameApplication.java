@@ -5,6 +5,7 @@ import com.example.namegame.controller.WelcomeDialogController;
 import com.example.namegame.service.ConfigService;
 import com.example.namegame.service.ImageService;
 import com.example.namegame.service.KeyboardShortcutService;
+import com.example.namegame.service.SoundService;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
@@ -24,6 +25,9 @@ public class NameGameApplication extends Application {
     @Override
     public void start(Stage primaryStage) throws Exception {
         ConfigService config = ConfigService.getInstance();
+        
+        // Initialize SoundService early to load sounds
+        SoundService.getInstance();
         
         if (config.isFirstLaunch()) {
             showWelcomeDialog(primaryStage);

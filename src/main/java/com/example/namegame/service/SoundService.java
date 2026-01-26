@@ -29,10 +29,10 @@ public class SoundService {
     }
     
     private void loadSounds() {
-        correctSound = loadSound("/com/example/namegame/sounds/correct.wav");
-        incorrectSound = loadSound("/com/example/namegame/sounds/incorrect.wav");
-        streakSound = loadSound("/com/example/namegame/sounds/streak.wav");
-        completeSound = loadSound("/com/example/namegame/sounds/complete.wav");
+        correctSound = loadSound("/sounds/correct.wav");
+        incorrectSound = loadSound("/sounds/incorrect.wav");
+        streakSound = loadSound("/sounds/streak.wav");
+        completeSound = loadSound("/sounds/complete.wav");
     }
     
     private AudioClip loadSound(String resourcePath) {
@@ -68,7 +68,11 @@ public class SoundService {
     
     private void playSound(AudioClip clip) {
         if (enabled && clip != null) {
-            clip.play();
+            try {
+                clip.play();
+            } catch (Exception e) {
+                System.err.println("Error playing sound: " + e.getMessage());
+            }
         }
     }
     
