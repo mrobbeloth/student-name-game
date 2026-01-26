@@ -48,24 +48,64 @@ public class MultipleChoiceController extends GameControllerBase {
     @Override
     public void setStage(Stage stage) {
         super.setStage(stage);
-        setupKeyboardShortcuts();
+        // Delay setup to ensure scene is ready
+        javafx.application.Platform.runLater(this::setupKeyboardShortcuts);
     }
     
     private void setupKeyboardShortcuts() {
-        stage.getScene().setOnKeyPressed(event -> {
+        if (stage == null || stage.getScene() == null) {
+            return;
+        }
+        
+        // Set up key handling on the root pane to ensure it receives events
+        rootPane.setOnKeyPressed(event -> {
             if (answered) return;
             
             KeyCode code = event.getCode();
             if (code == KeyboardShortcutService.CHOICE_1) {
                 selectAnswer(0);
+                event.consume(); // Prevent further propagation
             } else if (code == KeyboardShortcutService.CHOICE_2) {
                 selectAnswer(1);
+                event.consume();
             } else if (code == KeyboardShortcutService.CHOICE_3) {
                 selectAnswer(2);
+                event.consume();
             } else if (code == KeyboardShortcutService.CHOICE_4) {
                 selectAnswer(3);
+                event.consume();
             }
         });
+        
+        // Also set up on the scene as backup
+        stage.getScene().setOnKeyPressed(event -> {
+            if (answered) return;
+            
+            KeyCode code = event.getCode();
+            if (code == KeyboardShortcutService.CHOICE_1 || 
+                code == KeyboardShortcutService.CHOICE_2 || 
+                code == KeyboardShortcutService.CHOICE_3 || 
+                code == KeyboardShortcutService.CHOICE_4) {
+                
+                // Only handle if the event hasn't been consumed by rootPane
+                if (!event.isConsumed()) {
+                    int index = -1;
+                    if (code == KeyboardShortcutService.CHOICE_1) index = 0;
+                    else if (code == KeyboardShortcutService.CHOICE_2) index = 1;
+                    else if (code == KeyboardShortcutService.CHOICE_3) index = 2;
+                    else if (code == KeyboardShortcutService.CHOICE_4) index = 3;
+                    
+                    if (index >= 0) {
+                        selectAnswer(index);
+                        event.consume();
+                    }
+                }
+            }
+        });
+        
+        // Ensure the root pane can receive key events
+        rootPane.setFocusTraversable(true);
+        rootPane.requestFocus();
     }
     
     @Override
@@ -107,7 +147,14 @@ public class MultipleChoiceController extends GameControllerBase {
             btn.setText((i + 1) + ". " + choices.get(i).displayName());
             btn.setDisable(false);
             btn.getStyleClass().removeAll("correct", "incorrect");
+            // Remove focus from buttons so keyboard events go to root pane
+            btn.setFocusTraversable(false);
         }
+        
+        // Ensure root pane has focus for keyboard events
+        javafx.application.Platform.runLater(() -> {
+            rootPane.requestFocus();
+        });
         
         updateScoreDisplay();
     }
