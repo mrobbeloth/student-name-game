@@ -240,6 +240,9 @@ The project uses Maven with the following key plugins:
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
+## Analysis by Other Tools
+[Amazon Q Analysis of Architecture](q-dev-chat-2026-01-28.md)
+
 ## Acknowledgments
 
 - **Apache POI** - Excel file processing
