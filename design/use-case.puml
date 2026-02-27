@@ -1,0 +1,80 @@
+@startuml use-case
+skinparam packageStyle rectangle
+skinparam actorStyle awesome
+skinparam usecase {
+  BackgroundColor lightyellow
+  BorderColor black
+}
+
+title Student Name Game - Use Case Diagram
+
+actor "Teacher /\nUser" as User
+actor "File\nSystem" as FS <<system>>
+actor "Excel\nRoster" as Excel <<system>>
+
+rectangle "Student Name Game" {
+
+    package "Setup & Configuration" {
+        usecase "Configure\nPhoto Directory" as UC_CONFIG
+        usecase "Load Student\nRoster (.xls/.xlsx)" as UC_ROSTER
+        usecase "Load Student\nPhotos" as UC_PHOTOS
+        usecase "Fuzzy-Match Photos\nto Roster Names" as UC_FUZZY
+        usecase "Manually Map\nUnmatched Photos" as UC_MANUAL
+    }
+
+    package "Game Modes" {
+        usecase "Play\nMatching Game" as UC_MATCH
+        usecase "Play Multiple\nChoice Game" as UC_MC
+        usecase "Play Fill-in-\nthe-Blank Game" as UC_FILL
+    }
+
+    package "Feedback & Engagement" {
+        usecase "Receive\nAnimated Feedback" as UC_ANIM
+        usecase "Hear\nSound Effects" as UC_SOUND
+    }
+
+    package "Statistics & Progress" {
+        usecase "View Learning\nStatistics" as UC_STATS
+        usecase "Export\nStatistics" as UC_EXPORT
+        usecase "Import\nStatistics" as UC_IMPORT
+    }
+
+    package "Application Settings" {
+        usecase "Open\nSettings Dialog" as UC_SETTINGS
+        usecase "View Keyboard\nShortcuts" as UC_KEYS
+    }
+}
+
+' User interactions
+User --> UC_CONFIG
+User --> UC_ROSTER
+User --> UC_PHOTOS
+User --> UC_MANUAL
+User --> UC_MATCH
+User --> UC_MC
+User --> UC_FILL
+User --> UC_STATS
+User --> UC_EXPORT
+User --> UC_IMPORT
+User --> UC_SETTINGS
+User --> UC_KEYS
+
+' External system interactions
+FS --> UC_PHOTOS
+Excel --> UC_ROSTER
+
+' Include / extend relationships
+UC_ROSTER ..> UC_FUZZY : <<include>>
+UC_PHOTOS ..> UC_FUZZY : <<include>>
+UC_FUZZY ..> UC_MANUAL : <<extend>>\nif unmatched
+
+UC_MATCH ..> UC_ANIM : <<include>>
+UC_MATCH ..> UC_SOUND : <<include>>
+UC_MC ..> UC_ANIM : <<include>>
+UC_MC ..> UC_SOUND : <<include>>
+UC_FILL ..> UC_ANIM : <<include>>
+UC_FILL ..> UC_SOUND : <<include>>
+
+UC_CONFIG ..> UC_SETTINGS : <<include>>
+
+@enduml

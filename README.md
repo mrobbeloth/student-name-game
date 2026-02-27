@@ -17,6 +17,14 @@ A JavaFX 21 cross-platform desktop application for learning student names throug
 - **Animation & Sound**: Engaging feedback with animations and sound effects
 - **Export/Import**: Save and share statistics and progress data
 
+## Use Case Diagram
+
+![Student Name Game - Use Case Diagram](design/use-case.png)
+
+> The PlantUML source for this diagram is in [`design/use-case.puml`](design/use-case.puml).
+>
+> An ASCII rendering is available in [`design/use-case.utxt`](design/use-case.utxt).
+
 ## User Installation
 
 ### Requirements
