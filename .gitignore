@@ -67,3 +67,12 @@ Thumbs.db
 
 # Virtual machine crash logs
 hs_err_pid*
+
+# C++ build artifacts (dictionary-app)
+dictionary-app/build/
+dictionary-app/CMakeFiles/
+dictionary-app/CMakeCache.txt
+dictionary-app/cmake_install.cmake
+dictionary-app/Makefile
+*.o
+*.a
