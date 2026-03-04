@@ -6,6 +6,7 @@ import com.example.namegame.service.ConfigService;
 import com.example.namegame.service.ImageService;
 import com.example.namegame.service.KeyboardShortcutService;
 import com.example.namegame.service.SoundService;
+import com.example.namegame.util.AppLogger;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
@@ -17,14 +18,10 @@ import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
-import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.StandardOpenOption;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 
 /**
  * Main application entry point for Student Name Game.
@@ -35,9 +32,6 @@ public class NameGameApplication extends Application {
     private static final String APP_VERSION = "1.0.2";
     private static final int DEFAULT_WIDTH = 900;
     private static final int DEFAULT_HEIGHT = 700;
-
-    /** Log file written on every launch; visible even without a console window. */
-    private static Path logFile;
 
     // -----------------------------------------------------------------------
     // Logging helpers
@@ -60,31 +54,6 @@ public class NameGameApplication extends Application {
         return null; // logging completely disabled
     }
 
-    static void log(String message) {
-        log(message, null);
-    }
-
-    static void log(String message, Throwable t) {
-        String timestamp = LocalDateTime.now()
-                .format(DateTimeFormatter.ISO_LOCAL_DATE_TIME);
-        StringBuilder sb = new StringBuilder();
-        sb.append('[').append(timestamp).append("] ").append(message)
-          .append(System.lineSeparator());
-        if (t != null) {
-            StringWriter sw = new StringWriter();
-            t.printStackTrace(new PrintWriter(sw));
-            sb.append(sw).append(System.lineSeparator());
-        }
-        String entry = sb.toString();
-        System.err.print(entry);
-        if (logFile != null) {
-            try {
-                Files.writeString(logFile, entry,
-                        StandardOpenOption.CREATE, StandardOpenOption.APPEND);
-            } catch (IOException ignored) { /* nothing left to do */ }
-        }
-    }
-
     // -----------------------------------------------------------------------
     // Fatal-error dialog (replaces a missing stderr console in GUI installs)
     // -----------------------------------------------------------------------
@@ -97,6 +66,7 @@ public class NameGameApplication extends Application {
             Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.setTitle(APP_TITLE + " – Fatal Error");
             alert.setHeaderText("The application failed to start.");
+            Path logFile = AppLogger.getLogFile();
             String logHint = (logFile != null)
                     ? "\n\nFull details: " + logFile
                     : "";
@@ -116,7 +86,7 @@ public class NameGameApplication extends Application {
 
             alert.showAndWait();
         } catch (Exception dialogEx) {
-            log("Failed to show fatal-error dialog", dialogEx);
+            AppLogger.log("Failed to show fatal-error dialog", dialogEx);
         } finally {
             Platform.exit();
         }
@@ -129,7 +99,7 @@ public class NameGameApplication extends Application {
     @Override
     public void start(Stage primaryStage) {
         try {
-            log("start() called");
+            AppLogger.log("start() called");
             ConfigService config = ConfigService.getInstance();
 
             // Initialize SoundService early to load sounds
@@ -141,7 +111,7 @@ public class NameGameApplication extends Application {
                 loadImagesAndShowDashboard(primaryStage);
             }
         } catch (Exception e) {
-            log("Fatal error during startup", e);
+            AppLogger.log("Fatal error during startup", e);
             showFatalErrorDialog(primaryStage, e);
         }
     }
@@ -160,7 +130,7 @@ public class NameGameApplication extends Application {
             try {
                 loadImagesAndShowDashboard(primaryStage);
             } catch (Exception e) {
-                log("Error loading dashboard after welcome dialog", e);
+                AppLogger.log("Error loading dashboard after welcome dialog", e);
                 Platform.runLater(() -> showFatalErrorDialog(primaryStage, e));
             }
         });
@@ -211,21 +181,22 @@ public class NameGameApplication extends Application {
     }
     
     public static void main(String[] args) {
-        // Resolve log file before anything else so every startup attempt is recorded.
-        logFile = resolveLogFile();
-        log("=== Student Name Game starting (version " + APP_VERSION + ") ===");
-        log("java.version=" + System.getProperty("java.version")
+        // Initialise the log file before anything else so every startup attempt
+        // is recorded — even if it happens before the JavaFX toolkit starts.
+        AppLogger.init(resolveLogFile());
+        AppLogger.log("=== Student Name Game starting (version " + APP_VERSION + ") ===");
+        AppLogger.log("java.version=" + System.getProperty("java.version")
                 + "  os.name=" + System.getProperty("os.name")
                 + "  user.home=" + System.getProperty("user.home"));
 
         // Catch any thread that dies without an explicit handler (non-FX threads).
         Thread.setDefaultUncaughtExceptionHandler((thread, throwable) ->
-                log("Uncaught exception on thread \"" + thread.getName() + "\"", throwable));
+                AppLogger.log("Uncaught exception on thread \"" + thread.getName() + "\"", throwable));
 
         try {
             launch(args);
         } catch (Exception e) {
-            log("Fatal error in launch()", e);
+            AppLogger.log("Fatal error in launch()", e);
         }
     }
 }

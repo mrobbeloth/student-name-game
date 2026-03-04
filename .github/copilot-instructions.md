@@ -14,7 +14,7 @@ A JavaFX 21 cross-platform desktop application for learning student names throug
 - **Model**: Java 21 records for data (Student, GameSession, etc.)
 - **Service**: Business logic (ConfigService, RosterService, ImageService, etc.)
 - **Controller**: FXML controllers for views
-- **Util**: Animation factory, helpers
+- **Util**: Animation factory, AppLogger, helpers
 
 ## Key Features
 - Load student photos from configurable directory
@@ -30,6 +30,24 @@ A JavaFX 21 cross-platform desktop application for learning student names throug
 - Use JavaFX properties and bindings for reactive UI
 - All UI updates on JavaFX Application Thread (Platform.runLater)
 - Store user data in ~/.namegame/ (installed) or ./data/ (portable)
+
+## Logging
+- **Never** use `System.err.println()` or `System.out.println()` directly in service or controller code.
+  On Windows jpackage (MSI/EXE) installs the app runs as a pure GUI process with no console
+  window, so all console output is silently discarded.
+- Use `AppLogger.log(String)` / `AppLogger.log(String, Throwable)` from
+  `com.example.namegame.util.AppLogger` in every layer (services, controllers, utilities).
+- `AppLogger.init(Path)` is called once at startup (`NameGameApplication.main()`) before any
+  service singleton is created.  It directs output to both `stderr` **and** the persistent log
+  file at `~/.namegame/namegame.log` (or `%TEMP%\namegame.log` as a fallback).
+- Fatal startup exceptions are caught in `NameGameApplication.start()` and shown to the user
+  via a JavaFX error dialog (with an expandable stack-trace area) rather than dying silently.
+
+## Error Handling
+- Wrap `Application.start()` in a broad try/catch and call `showFatalErrorDialog()` so the
+  user always gets visible feedback when the app cannot start.
+- Non-fatal errors in services (e.g. missing sound files, I/O on statistics) should be logged
+  with `AppLogger.log()` and allow the app to continue running in a degraded state.
 
 ## Build Commands
 ```bash

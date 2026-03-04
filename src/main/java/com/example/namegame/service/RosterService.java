@@ -1,5 +1,6 @@
 package com.example.namegame.service;
 
+import com.example.namegame.util.AppLogger;
 import org.apache.poi.ss.usermodel.*;
 
 import java.io.*;
@@ -39,7 +40,7 @@ public class RosterService {
         // Find roster file
         Path rosterFile = findRosterFile(directory);
         if (rosterFile == null) {
-            System.err.println("No roster file (roster.xls or roster.xlsx) found in: " + directory);
+            AppLogger.log("No roster file (roster.xls or roster.xlsx) found in: " + directory);
             return false;
         }
         
@@ -53,7 +54,7 @@ public class RosterService {
             int nameColumnIndex = findNameColumn(headerRow);
             
             if (nameColumnIndex < 0) {
-                System.err.println("'Name' column not found in roster");
+                AppLogger.log("'Name' column not found in roster: " + rosterFile);
                 return false;
             }
             
@@ -74,11 +75,11 @@ public class RosterService {
                 }
             }
             
-            System.out.println("Loaded " + rosterNames.size() + " names from roster");
+            AppLogger.log("Loaded " + rosterNames.size() + " names from roster: " + rosterFile);
             return !rosterNames.isEmpty();
             
         } catch (IOException e) {
-            System.err.println("Failed to read roster: " + e.getMessage());
+            AppLogger.log("Failed to read roster: " + rosterFile, e);
             return false;
         }
     }
