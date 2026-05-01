@@ -1,20 +1,20 @@
 #!/bin/bash
 
 # Student Name Game Launcher for macOS/Linux
-# This script launches the portable version with bundled JRE
+# Uses bundled JRE (runtime/) if present, otherwise falls back to system Java
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
-JAVA_HOME="$SCRIPT_DIR/runtime"
 
-if [ ! -x "$JAVA_HOME/bin/java" ]; then
-    echo "Error: Java runtime not found at $JAVA_HOME"
-    echo "Please ensure the runtime folder contains a valid JDK 21+ installation."
-    exit 1
+if [ -x "$SCRIPT_DIR/runtime/bin/java" ]; then
+    JAVA_EXE="$SCRIPT_DIR/runtime/bin/java"
+else
+    JAVA_EXE="java"
 fi
 
 cd "$SCRIPT_DIR"
 
-"$JAVA_HOME/bin/java" \
+"$JAVA_EXE" \
     --module-path "$SCRIPT_DIR/lib" \
     --add-modules javafx.controls,javafx.fxml,javafx.media \
+    --enable-native-access=javafx.graphics,javafx.media \
     -jar "$SCRIPT_DIR/student-name-game.jar" "$@"

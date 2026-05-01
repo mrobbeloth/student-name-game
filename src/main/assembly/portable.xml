@@ -49,6 +49,15 @@
                 <include>*.mp3</include>
             </includes>
         </fileSet>
+
+        <!-- Include platform-specific JavaFX JARs (native libs required at runtime) -->
+        <fileSet>
+            <directory>${project.build.directory}/lib</directory>
+            <outputDirectory>/lib</outputDirectory>
+            <includes>
+                <include>*.jar</include>
+            </includes>
+        </fileSet>
     </fileSets>
     
     <!-- 
