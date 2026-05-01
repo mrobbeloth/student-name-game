@@ -44,7 +44,7 @@
         <configuration>
           <archive>
             <manifest>
-              <mainClass>com.example.namegame.NameGameApplication</mainClass>
+              <mainClass>com.example.namegame.Launcher</mainClass>
             </manifest>
           </archive>
         </configuration>
@@ -65,7 +65,7 @@
             <configuration>
               <transformers>
                 <transformer>
-                  <mainClass>com.example.namegame.NameGameApplication</mainClass>
+                  <mainClass>com.example.namegame.Launcher</mainClass>
                 </transformer>
                 <transformer />
               </transformers>
@@ -79,6 +79,64 @@
                   </excludes>
                 </filter>
               </filters>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <artifactId>maven-dependency-plugin</artifactId>
+        <version>3.6.1</version>
+        <executions>
+          <execution>
+            <id>copy-javafx-libs</id>
+            <phase>prepare-package</phase>
+            <goals>
+              <goal>copy</goal>
+            </goals>
+            <configuration>
+              <artifactItems>
+                <artifactItem>
+                  <groupId>org.openjfx</groupId>
+                  <artifactId>javafx-base</artifactId>
+                  <version>${javafx.version}</version>
+                  <classifier>${javafx.platform}</classifier>
+                  <type>jar</type>
+                  <destFileName>javafx-base.jar</destFileName>
+                </artifactItem>
+                <artifactItem>
+                  <groupId>org.openjfx</groupId>
+                  <artifactId>javafx-graphics</artifactId>
+                  <version>${javafx.version}</version>
+                  <classifier>${javafx.platform}</classifier>
+                  <type>jar</type>
+                  <destFileName>javafx-graphics.jar</destFileName>
+                </artifactItem>
+                <artifactItem>
+                  <groupId>org.openjfx</groupId>
+                  <artifactId>javafx-controls</artifactId>
+                  <version>${javafx.version}</version>
+                  <classifier>${javafx.platform}</classifier>
+                  <type>jar</type>
+                  <destFileName>javafx-controls.jar</destFileName>
+                </artifactItem>
+                <artifactItem>
+                  <groupId>org.openjfx</groupId>
+                  <artifactId>javafx-fxml</artifactId>
+                  <version>${javafx.version}</version>
+                  <classifier>${javafx.platform}</classifier>
+                  <type>jar</type>
+                  <destFileName>javafx-fxml.jar</destFileName>
+                </artifactItem>
+                <artifactItem>
+                  <groupId>org.openjfx</groupId>
+                  <artifactId>javafx-media</artifactId>
+                  <version>${javafx.version}</version>
+                  <classifier>${javafx.platform}</classifier>
+                  <type>jar</type>
+                  <destFileName>javafx-media.jar</destFileName>
+                </artifactItem>
+              </artifactItems>
+              <outputDirectory>${project.build.directory}/lib</outputDirectory>
             </configuration>
           </execution>
         </executions>
