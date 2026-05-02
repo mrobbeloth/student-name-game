@@ -1,8 +1,10 @@
 package com.example.namegame.controller;
 
 import com.example.namegame.model.Student;
+import com.example.namegame.service.ImageCacheService;
 import com.example.namegame.util.AnimationFactory;
 import javafx.animation.FadeTransition;
+import javafx.animation.PauseTransition;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
@@ -10,6 +12,7 @@ import javafx.geometry.Bounds;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -17,9 +20,9 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
+import javafx.stage.Window;
 import javafx.util.Duration;
 
-import java.io.FileInputStream;
 import java.util.*;
 
 /**
@@ -48,6 +51,7 @@ public class MatchingGameController extends GameControllerBase {
     private static final double BASE_BUTTON_HEIGHT = 140.0;
     private static final double BASE_NAME_WIDTH = 150.0;
     private static final double BASE_NAME_HEIGHT = 40.0;
+    private static final Duration RESIZE_DEBOUNCE_DELAY = Duration.millis(75);
     private double currentScaleFactor = 1.0;
     
     // Hover preview variables
@@ -56,21 +60,24 @@ public class MatchingGameController extends GameControllerBase {
     private ImageView hoverPreviewImage;
     private FadeTransition fadeInTransition;
     private FadeTransition fadeOutTransition;
+    private final PauseTransition resizeDebounce = new PauseTransition(RESIZE_DEBOUNCE_DELAY);
+    private ChangeListener<Scene> sceneListener;
+    private ChangeListener<Number> resizeListener;
+    private Window attachedWindow;
     
     @FXML
     public void initialize() {
         // Initialize hover preview system
         setupHoverPreview();
+        resizeDebounce.setOnFinished(e -> updateScaling());
         
         // Initialize scaling when the scene is available
         if (imagePane != null) {
-            imagePane.sceneProperty().addListener((observable, oldScene, newScene) -> {
-                if (newScene != null) {
-                    setupWindowResizeListener();
-                    // Add the hover preview to the scene root after scene is available
-                    addHoverPreviewToScene();
-                }
-            });
+            sceneListener = (observable, oldScene, newScene) -> handleSceneChange(oldScene, newScene);
+            imagePane.sceneProperty().addListener(sceneListener);
+            if (imagePane.getScene() != null) {
+                handleSceneChange(null, imagePane.getScene());
+            }
         }
     }
     
@@ -84,20 +91,30 @@ public class MatchingGameController extends GameControllerBase {
      * Sets up window resize listener for responsive scaling
      */
     private void setupWindowResizeListener() {
-        if (imagePane.getScene() != null && imagePane.getScene().getWindow() != null) {
-            ChangeListener<Number> resizeListener = new ChangeListener<Number>() {
+        if (imagePane.getScene() == null || imagePane.getScene().getWindow() == null) {
+            return;
+        }
+
+        Window window = imagePane.getScene().getWindow();
+        if (window.equals(attachedWindow)) {
+            updateScaling();
+            return;
+        }
+
+        detachWindowResizeListener();
+        if (resizeListener == null) {
+            resizeListener = new ChangeListener<>() {
                 @Override
                 public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
-                    updateScaling();
+                    requestScalingUpdate();
                 }
             };
-            
-            imagePane.getScene().getWindow().widthProperty().addListener(resizeListener);
-            imagePane.getScene().getWindow().heightProperty().addListener(resizeListener);
-            
-            // Initial scaling
-            updateScaling();
         }
+
+        attachedWindow = window;
+        attachedWindow.widthProperty().addListener(resizeListener);
+        attachedWindow.heightProperty().addListener(resizeListener);
+        updateScaling();
     }
     
     /**
@@ -165,11 +182,53 @@ public class MatchingGameController extends GameControllerBase {
     /**
      * Adds the hover preview to the scene root
      */
-    private void addHoverPreviewToScene() {
-        if (imagePane.getScene() != null && imagePane.getScene().getRoot() instanceof Pane rootPane) {
+    private void addHoverPreviewToScene(Scene scene) {
+        if (scene != null && scene.getRoot() instanceof Pane rootPane) {
             if (!rootPane.getChildren().contains(hoverPreviewPane)) {
                 rootPane.getChildren().add(hoverPreviewPane);
             }
+        }
+    }
+
+    private void removeHoverPreviewFromScene(Scene scene) {
+        if (scene != null && scene.getRoot() instanceof Pane rootPane) {
+            rootPane.getChildren().remove(hoverPreviewPane);
+        }
+    }
+
+    private void handleSceneChange(Scene oldScene, Scene newScene) {
+        if (oldScene != null) {
+            removeHoverPreviewFromScene(oldScene);
+            detachWindowResizeListener();
+        }
+
+        if (newScene != null) {
+            addHoverPreviewToScene(newScene);
+            javafx.application.Platform.runLater(this::setupWindowResizeListener);
+        }
+    }
+
+    private void requestScalingUpdate() {
+        resizeDebounce.playFromStart();
+    }
+
+    private void detachWindowResizeListener() {
+        resizeDebounce.stop();
+        if (attachedWindow != null && resizeListener != null) {
+            attachedWindow.widthProperty().removeListener(resizeListener);
+            attachedWindow.heightProperty().removeListener(resizeListener);
+        }
+        attachedWindow = null;
+    }
+
+    private void cleanupController() {
+        detachWindowResizeListener();
+        if (imagePane != null && sceneListener != null) {
+            imagePane.sceneProperty().removeListener(sceneListener);
+        }
+        removeHoverPreviewFromScene(imagePane != null ? imagePane.getScene() : null);
+        if (hoverPreviewImage != null) {
+            hoverPreviewImage.setImage(null);
         }
     }
     
@@ -234,9 +293,6 @@ public class MatchingGameController extends GameControllerBase {
      * Scales scroll panes
      */
     private void scaleScrollPanes() {
-        double baseScrollHeight = 400.0;
-        double scaledScrollHeight = baseScrollHeight * currentScaleFactor;
-        
         // Find scroll panes in the UI tree
         scaleScrollPanesRecursive(imagePane.getParent());
     }
@@ -346,7 +402,7 @@ public class MatchingGameController extends GameControllerBase {
         btn.getStyleClass().add("image-card");
         
         try {
-            Image image = new Image(new FileInputStream(student.imagePath().toFile()), BASE_IMAGE_SIZE, BASE_IMAGE_SIZE, true, true);
+            Image image = ImageCacheService.getInstance().load(student.imagePath(), BASE_IMAGE_SIZE, BASE_IMAGE_SIZE);
             ImageView imageView = new ImageView(image);
             imageView.setFitWidth(BASE_IMAGE_SIZE);
             imageView.setFitHeight(BASE_IMAGE_SIZE);
@@ -393,10 +449,12 @@ public class MatchingGameController extends GameControllerBase {
         }
         
         try {
-            // Load a larger version of the image for preview
             double previewSize = PREVIEW_IMAGE_SIZE * currentScaleFactor;
-            Image previewImage = new Image(new FileInputStream(student.imagePath().toFile()), 
-                                         previewSize, previewSize, true, true);
+            Image previewImage = ImageCacheService.getInstance().load(
+                student.imagePath(),
+                PREVIEW_IMAGE_SIZE,
+                PREVIEW_IMAGE_SIZE
+            );
             hoverPreviewImage.setImage(previewImage);
             hoverPreviewImage.setFitWidth(previewSize);
             hoverPreviewImage.setFitHeight(previewSize);
@@ -614,6 +672,7 @@ public class MatchingGameController extends GameControllerBase {
         ));
         
         results.showAndWait();
+        cleanupController();
         returnHome();
     }
     
@@ -632,6 +691,7 @@ public class MatchingGameController extends GameControllerBase {
     
     @FXML
     private void goHome() {
+        cleanupController();
         returnHome();
     }
 }

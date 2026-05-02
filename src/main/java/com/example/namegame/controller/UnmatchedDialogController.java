@@ -2,6 +2,7 @@ package com.example.namegame.controller;
 
 import com.example.namegame.model.ScoredMatch;
 import com.example.namegame.model.UnmatchedImage;
+import com.example.namegame.service.ImageCacheService;
 import com.example.namegame.service.ImageService;
 import com.example.namegame.service.RosterService;
 import javafx.beans.property.SimpleStringProperty;
@@ -14,7 +15,6 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.stage.Stage;
 
-import java.io.FileInputStream;
 import java.util.List;
 
 /**
@@ -62,14 +62,16 @@ public class UnmatchedDialogController {
             protected void updateItem(ImageView item, boolean empty) {
                 super.updateItem(item, empty);
                 if (empty || getTableRow() == null || getTableRow().getItem() == null) {
+                    imageView.setImage(null);
                     setGraphic(null);
                 } else {
                     UnmatchedImage unmatched = getTableRow().getItem();
                     try {
-                        Image img = new Image(new FileInputStream(unmatched.path().toFile()), 64, 64, true, true);
+                        Image img = ImageCacheService.getInstance().load(unmatched.path(), 64, 64);
                         imageView.setImage(img);
                         setGraphic(imageView);
                     } catch (Exception e) {
+                        imageView.setImage(null);
                         setGraphic(null);
                     }
                 }

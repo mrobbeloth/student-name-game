@@ -10,6 +10,7 @@ import java.nio.file.*;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Consumer;
+import java.util.stream.Stream;
 
 /**
  * Manages loading and matching student images with roster entries.
@@ -48,6 +49,7 @@ public class ImageService {
     public boolean loadImages() {
         students.clear();
         unmatchedImages.clear();
+        ImageCacheService.getInstance().clear();
         
         Path directory = ConfigService.getInstance().getImagesDirectory();
         if (directory == null || !Files.isDirectory(directory)) {
@@ -64,8 +66,8 @@ public class ImageService {
         Map<String, String> squashedToOriginal = RosterService.getInstance().getSquashedToOriginal();
         Map<String, String> manualMappings = MappingService.getInstance().getAllMappings();
         
-        try {
-            Files.list(directory)
+        try (Stream<Path> imagePaths = Files.list(directory)) {
+            imagePaths
                 .filter(this::isImageFile)
                 .forEach(path -> processImageFile(path, squashedToOriginal, manualMappings));
         } catch (IOException e) {

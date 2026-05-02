@@ -324,7 +324,7 @@ public class MainDashboardController {
     private void showAbout() {
         Alert about = new Alert(Alert.AlertType.INFORMATION);
         about.setTitle("About Student Name Game");
-        about.setHeaderText("Student Name Game v1.0.0");
+        about.setHeaderText("Student Name Game v1.0.2");
         about.setContentText("""
             A gamified application for learning student names.
             
@@ -333,7 +333,7 @@ public class MainDashboardController {
             • Multiple choice quiz
             • Fill-in-the-blank
             
-            Built with Java 21 and JavaFX 21.
+            Built with Java 25 and JavaFX 24.
             """);
         about.showAndWait();
     }

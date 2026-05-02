@@ -1,9 +1,9 @@
 # Student Name Game
 
-A JavaFX 21 cross-platform desktop application for learning student names through gamified exercises. Features matching, multiple choice, and fill-in-the-blank games with statistics tracking and progress monitoring.
+A JavaFX 24 cross-platform desktop application for learning student names through gamified exercises. Features matching, multiple choice, and fill-in-the-blank games with statistics tracking and progress monitoring.
 
-![Java 21](https://img.shields.io/badge/Java-21%20LTS-orange)
-![JavaFX](https://img.shields.io/badge/JavaFX-21-blue)
+![Java 25](https://img.shields.io/badge/Java-25%20LTS-orange)
+![JavaFX](https://img.shields.io/badge/JavaFX-24-blue)
 ![Platform](https://img.shields.io/badge/Platform-Windows%20%7C%20macOS%20%7C%20Linux-lightgrey)
 
 ## Features
@@ -73,39 +73,39 @@ A JavaFX 21 cross-platform desktop application for learning student names throug
 
 ### Prerequisites
 
-- **Java 21 LTS** (OpenJDK or Oracle JDK)
+- **Java 25 LTS** (OpenJDK or Oracle JDK)
 - **Maven 3.8+** (or use included Maven Wrapper)
 - **Git** for version control
 - **IDE** (IntelliJ IDEA, Eclipse, VS Code recommended)
 
 ### Environment Setup
 
-#### 1. Install Java 21 LTS
+#### 1. Install Java 25 LTS
 
 **Windows (Chocolatey):**
 ```bash
-choco install openjdk21
+choco install openjdk25
 ```
 
 **Windows (Manual):**
-- Download from [Microsoft OpenJDK](https://docs.microsoft.com/en-us/java/openjdk/download#openjdk-21)
+- Download from the Java 25 LTS distribution of your choice and set `JAVA_HOME`
 - Set `JAVA_HOME` environment variable
 
 **macOS (Homebrew):**
 ```bash
-brew install openjdk@21
+brew install openjdk@25
 ```
 
 **Linux (Ubuntu/Debian):**
 ```bash
 sudo apt update
-sudo apt install openjdk-21-jdk
+sudo apt install openjdk-25-jdk
 ```
 
 #### 2. Verify Installation
 ```bash
 java -version
-# Should show: openjdk version "21.x.x"
+# Should show: openjdk version "25.x.x"
 ```
 
 #### 3. Clone Repository
@@ -159,15 +159,15 @@ src/main/
 
 ### Architecture
 
-- **Model**: Java 21 records for immutable data (`Student`, `GameSession`, etc.)
+- **Model**: Java 25 records for immutable data (`Student`, `GameSession`, etc.)
 - **Service**: Business logic layer (`ConfigService`, `RosterService`, `ImageService`)
 - **Controller**: JavaFX FXML controllers for UI interaction
 - **Util**: Shared utilities (`AnimationFactory`, helpers)
 
 ### Technology Stack
 
-- **Java 21 LTS** - Latest Java features (records, pattern matching, virtual threads)
-- **JavaFX 21** - Modern desktop UI framework
+- **Java 25 LTS** - Latest Java features (records, pattern matching, virtual threads)
+- **JavaFX 24** - Modern desktop UI framework
 - **Apache POI 5.5.1** - Excel file processing (`.xls`/`.xlsx`)
 - **Apache Commons Text 1.15.0** - String utilities (Levenshtein distance)
 - **Gson 2.13.2** - JSON serialization
@@ -177,18 +177,18 @@ src/main/
 
 #### IntelliJ IDEA
 1. Import as Maven project
-2. Set Project SDK to Java 21
+2. Set Project SDK to Java 25
 3. Enable preview features: `--enable-preview`
 4. Install JavaFX plugin (if needed)
 
 #### Eclipse
 1. Import as "Existing Maven Projects"
-2. Configure Java Build Path to use Java 21
+2. Configure Java Build Path to use Java 25
 3. Add VM arguments: `--enable-preview`
 
 #### VS Code
 1. Install "Extension Pack for Java"
-2. Set `java.configuration.runtimes` to Java 21
+2. Set `java.configuration.runtimes` to Java 25
 3. Configure launch.json with `--enable-preview`
 
 ### Data Storage
@@ -212,7 +212,7 @@ Contains:
 
 ### Coding Guidelines
 
-- Use **Java 21 features**: records, pattern matching, virtual threads
+- Use **Java 25 features**: records, pattern matching, virtual threads
 - Follow **JavaFX best practices**: properties, bindings, Platform.runLater()
 - **All UI updates** must be on JavaFX Application Thread
 - Use **meaningful variable names** and add JavaDoc for public methods

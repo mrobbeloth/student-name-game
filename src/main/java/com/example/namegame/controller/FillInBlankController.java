@@ -2,6 +2,7 @@ package com.example.namegame.controller;
 
 import com.example.namegame.model.Student;
 import com.example.namegame.service.FuzzyMatcher;
+import com.example.namegame.service.ImageCacheService;
 import com.example.namegame.service.KeyboardShortcutService;
 import com.example.namegame.service.RosterService;
 import com.example.namegame.util.AnimationFactory;
@@ -13,7 +14,6 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.stage.Stage;
 
-import java.io.FileInputStream;
 import java.util.List;
 
 /**
@@ -120,7 +120,7 @@ public class FillInBlankController extends GameControllerBase {
         
         // Load image
         try {
-            Image image = new Image(new FileInputStream(current.imagePath().toFile()), 300, 400, true, true);
+            Image image = ImageCacheService.getInstance().load(current.imagePath(), 300, 400);
             studentImage.setImage(image);
             AnimationFactory.slideInFromRight(studentImage);
         } catch (Exception e) {

@@ -1,17 +1,17 @@
 # Student Name Game - Copilot Instructions
 
 ## Project Overview
-A JavaFX 21 cross-platform desktop application for learning student names through gamified exercises (matching, multiple choice, fill-in-the-blank).
+A JavaFX 24 cross-platform desktop application for learning student names through gamified exercises (matching, multiple choice, fill-in-the-blank).
 
 ## Tech Stack
-- Java 21
-- JavaFX 21 (controls, fxml, media)
+- Java 25
+- JavaFX 24 (controls, fxml, media)
 - Apache POI 5.5.1 (Excel .xls/.xlsx parsing)
 - Apache Commons Text 1.15.0 (Levenshtein distance)
 - Maven (build system)
 
 ## Architecture
-- **Model**: Java 21 records for data (Student, GameSession, etc.)
+- **Model**: Java 25 records for data (Student, GameSession, etc.)
 - **Service**: Business logic (ConfigService, RosterService, ImageService, etc.)
 - **Controller**: FXML controllers for views
 - **Util**: Animation factory, helpers
@@ -26,7 +26,7 @@ A JavaFX 21 cross-platform desktop application for learning student names throug
 - Cross-platform: Windows, macOS, Linux (installers + portable ZIPs)
 
 ## Coding Guidelines
-- Use Java 21 features: records, pattern matching, virtual threads
+- Use Java 25 features: records, pattern matching, virtual threads
 - Use JavaFX properties and bindings for reactive UI
 - All UI updates on JavaFX Application Thread (Platform.runLater)
 - Store user data in ~/.namegame/ (installed) or ./data/ (portable)

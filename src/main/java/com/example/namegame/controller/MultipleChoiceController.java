@@ -1,6 +1,7 @@
 package com.example.namegame.controller;
 
 import com.example.namegame.model.Student;
+import com.example.namegame.service.ImageCacheService;
 import com.example.namegame.service.KeyboardShortcutService;
 import com.example.namegame.util.AnimationFactory;
 import javafx.fxml.FXML;
@@ -11,7 +12,6 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.layout.*;
 import javafx.stage.Stage;
 
-import java.io.FileInputStream;
 import java.util.*;
 
 /**
@@ -122,7 +122,7 @@ public class MultipleChoiceController extends GameControllerBase {
         
         // Load image
         try {
-            Image image = new Image(new FileInputStream(current.imagePath().toFile()), 300, 400, true, true);
+            Image image = ImageCacheService.getInstance().load(current.imagePath(), 300, 400);
             studentImage.setImage(image);
             AnimationFactory.slideInFromRight(studentImage);
         } catch (Exception e) {

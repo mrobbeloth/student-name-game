@@ -5,6 +5,7 @@ import org.apache.poi.ss.usermodel.*;
 import java.io.*;
 import java.nio.file.*;
 import java.util.*;
+import java.util.stream.Stream;
 
 /**
  * Reads student roster from Excel files (.xls or .xlsx).
@@ -97,8 +98,8 @@ public class RosterService {
         }
         
         // Try to find any xls/xlsx file with "roster" in the name
-        try {
-            return Files.list(directory)
+        try (Stream<Path> files = Files.list(directory)) {
+            return files
                 .filter(p -> {
                     String fileName = p.getFileName().toString().toLowerCase();
                     return fileName.contains("roster") && 

@@ -12,8 +12,7 @@
         <artifactId>maven-compiler-plugin</artifactId>
         <version>3.11.0</version>
         <configuration>
-          <source>25</source>
-          <target>25</target>
+          <release>${maven.compiler.release}</release>
         </configuration>
       </plugin>
       <plugin>
@@ -182,10 +181,9 @@
     </profile>
   </profiles>
   <properties>
-    <maven.compiler.target>25</maven.compiler.target>
-    <commons.text.version>1.15.0</commons.text.version>
+    <maven.compiler.release>25</maven.compiler.release>
     <main.class>com.example.namegame.NameGameApplication</main.class>
-    <maven.compiler.source>25</maven.compiler.source>
+    <commons.text.version>1.15.0</commons.text.version>
     <poi.version>5.5.1</poi.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <skipNativePackage>false</skipNativePackage>
