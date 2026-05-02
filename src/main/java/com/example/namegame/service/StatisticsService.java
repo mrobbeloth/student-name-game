@@ -2,6 +2,7 @@ package com.example.namegame.service;
 
 import com.example.namegame.model.GameStatistics;
 import com.example.namegame.model.Student;
+import com.example.namegame.util.AppLogger;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
@@ -43,7 +44,7 @@ public class StatisticsService {
                     statistics = new GameStatistics();
                 }
             } catch (IOException e) {
-                System.err.println("Failed to load statistics: " + e.getMessage());
+                AppLogger.log("Failed to load statistics: " + statisticsPath, e);
                 statistics = new GameStatistics();
             }
         } else {
@@ -56,7 +57,7 @@ public class StatisticsService {
             String json = gson.toJson(statistics);
             Files.writeString(statisticsPath, json);
         } catch (IOException e) {
-            System.err.println("Failed to save statistics: " + e.getMessage());
+            AppLogger.log("Failed to save statistics: " + statisticsPath, e);
         }
     }
     

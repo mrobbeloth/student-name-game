@@ -1,5 +1,6 @@
 package com.example.namegame.service;
 
+import com.example.namegame.util.AppLogger;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
@@ -46,7 +47,7 @@ public class MappingService {
                     mappings = new HashMap<>();
                 }
             } catch (IOException e) {
-                System.err.println("Failed to load mappings: " + e.getMessage());
+                AppLogger.log("Failed to load mappings: " + mappingsPath, e);
                 mappings = new HashMap<>();
             }
         } else {
@@ -59,7 +60,7 @@ public class MappingService {
             String json = gson.toJson(mappings);
             Files.writeString(mappingsPath, json);
         } catch (IOException e) {
-            System.err.println("Failed to save mappings: " + e.getMessage());
+            AppLogger.log("Failed to save mappings: " + mappingsPath, e);
         }
     }
     

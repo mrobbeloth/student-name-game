@@ -3,6 +3,7 @@ package com.example.namegame.service;
 import com.example.namegame.model.ScoredMatch;
 import com.example.namegame.model.Student;
 import com.example.namegame.model.UnmatchedImage;
+import com.example.namegame.util.AppLogger;
 import javafx.application.Platform;
 
 import java.io.IOException;
@@ -53,13 +54,13 @@ public class ImageService {
         
         Path directory = ConfigService.getInstance().getImagesDirectory();
         if (directory == null || !Files.isDirectory(directory)) {
-            System.err.println("Invalid images directory");
+            AppLogger.log("Invalid images directory: " + directory);
             return false;
         }
         
         // Load roster first
         if (!RosterService.getInstance().loadRoster(directory)) {
-            System.err.println("Failed to load roster");
+            AppLogger.log("Failed to load roster from: " + directory);
             return false;
         }
         
@@ -71,12 +72,12 @@ public class ImageService {
                 .filter(this::isImageFile)
                 .forEach(path -> processImageFile(path, squashedToOriginal, manualMappings));
         } catch (IOException e) {
-            System.err.println("Failed to list directory: " + e.getMessage());
+            AppLogger.log("Failed to list directory: " + directory, e);
             return false;
         }
         
-        System.out.println("Loaded " + students.size() + " students, " + 
-                          unmatchedImages.size() + " unmatched images");
+        AppLogger.log("Loaded " + students.size() + " students, " +
+                      unmatchedImages.size() + " unmatched images");
         
         return !students.isEmpty();
     }
@@ -203,7 +204,7 @@ public class ImageService {
             watchThread = Thread.startVirtualThread(this::watchLoop);
             
         } catch (IOException e) {
-            System.err.println("Failed to start file watcher: " + e.getMessage());
+            AppLogger.log("Failed to start file watcher", e);
         }
     }
     

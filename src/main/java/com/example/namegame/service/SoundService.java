@@ -1,5 +1,6 @@
 package com.example.namegame.service;
 
+import com.example.namegame.util.AppLogger;
 import javafx.scene.media.AudioClip;
 
 import java.net.URL;
@@ -41,11 +42,11 @@ public class SoundService {
             if (url != null) {
                 return new AudioClip(url.toExternalForm());
             } else {
-                System.err.println("Sound not found: " + resourcePath);
+                AppLogger.log("Sound not found: " + resourcePath);
                 return null;
             }
         } catch (Exception e) {
-            System.err.println("Failed to load sound " + resourcePath + ": " + e.getMessage());
+            AppLogger.log("Failed to load sound " + resourcePath, e);
             return null;
         }
     }
@@ -71,7 +72,7 @@ public class SoundService {
             try {
                 clip.play();
             } catch (Exception e) {
-                System.err.println("Error playing sound: " + e.getMessage());
+                AppLogger.log("Error playing sound", e);
             }
         }
     }
