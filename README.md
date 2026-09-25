@@ -197,7 +197,7 @@ src/main/
 - **Portable**: `./data/` (relative to application)
 
 Contains:
-- `config.ini` - Application settings
+- `config.properties` - Application settings
 - `mappings.json` - Manual image-to-name mappings  
 - `statistics.json` - Game statistics and progress
 - `exports/` - Exported statistics files
@@ -221,7 +221,7 @@ Contains:
 ### Build System
 
 The project uses Maven with the following key plugins:
-- **maven-compiler-plugin** - Java 21 compilation with preview features
+- **maven-compiler-plugin** - Java 25 compilation
 - **javafx-maven-plugin** - JavaFX application execution
 - **maven-shade-plugin** - Creates fat JAR with all dependencies
 - **maven-assembly-plugin** - Builds portable ZIP distributions
@@ -231,7 +231,7 @@ The project uses Maven with the following key plugins:
 #### Common Issues
 
 **"Module not found" errors:**
-- Ensure Java 21 is installed and `JAVA_HOME` is set correctly
+- Ensure Java 25 is installed and `JAVA_HOME` is set correctly
 - Verify JavaFX modules are on the module path
 
 **Build failures:**
@@ -256,4 +256,4 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 - **Apache POI** - Excel file processing
 - **OpenJFX** - JavaFX framework
 - **Apache Commons** - String utilities
-- **Microsoft OpenJDK** - Java 21 LTS runtime
+- **Microsoft OpenJDK** - Java 25 LTS runtime

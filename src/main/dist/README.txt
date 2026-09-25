@@ -49,7 +49,7 @@ and matches it against squashed student names (spaces and commas removed).
 --------------------------------------------------------------------------------
 
 This portable version stores all settings and data in the application folder:
-- config.ini - Your settings (data directory location, etc.)
+- config.properties - Your settings (data directory location, etc.)
 - mappings.json - Manual name assignments for unmatched photos
 - statistics.json - Your game progress and scores
 

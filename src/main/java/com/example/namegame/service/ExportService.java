@@ -105,7 +105,7 @@ public class ExportService {
             
             while ((entry = zis.getNextEntry()) != null) {
                 String name = entry.getName();
-                if (name.equals("config.ini") || name.equals("statistics.json") || name.equals("mappings.json")) {
+                if (name.equals("config.properties") || name.equals("statistics.json") || name.equals("mappings.json")) {
                     hasConfig = true;
                 }
                 zis.closeEntry();
