@@ -69,10 +69,15 @@ public abstract class GameControllerBase {
     protected void handleIncorrectAnswer() {
         SoundService.getInstance().playIncorrect();
         StatisticsService.getInstance().recordAnswer(session.getCurrentStudent(), false);
-        session.recordIncorrect();
         
+        // Show feedback for the current student BEFORE advancing.
+        // recordIncorrect() advances to the next student (setting currentStudent
+        // to null on the final question), so showCorrectAnswer() must run first,
+        // otherwise it displays the wrong name or throws NPE on the last question.
         playIncorrectAnimation();
         showCorrectAnswer();
+        
+        session.recordIncorrect();
         
         // Longer delay to show correct answer
         javafx.animation.PauseTransition pause = new javafx.animation.PauseTransition(javafx.util.Duration.millis(1500));

@@ -180,6 +180,9 @@ public class FillInBlankController extends GameControllerBase {
     @Override
     protected void showCorrectAnswer() {
         Student current = session.getCurrentStudent();
+        if (current == null) {
+            return;
+        }
         feedbackLabel.setText("Correct answer: " + current.displayName());
         feedbackLabel.setVisible(true);
         feedbackLabel.setStyle("-fx-text-fill: green; -fx-font-weight: bold;");

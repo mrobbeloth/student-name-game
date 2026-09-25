@@ -202,7 +202,11 @@ public class MultipleChoiceController extends GameControllerBase {
         Button correctBtn = choiceButtons.get(correctIndex);
         correctBtn.getStyleClass().add("correct");
         
-        feedbackLabel.setText("Correct answer: " + session.getCurrentStudent().displayName());
+        Student current = session.getCurrentStudent();
+        if (current == null) {
+            return;
+        }
+        feedbackLabel.setText("Correct answer: " + current.displayName());
         feedbackLabel.setVisible(true);
         feedbackLabel.setStyle("-fx-text-fill: green;");
     }
