@@ -58,7 +58,7 @@
                 <VBox fx:id="matchingCard" styleClass="game-card" alignment="CENTER" spacing="10"
                       onMouseClicked="#startMatching" prefWidth="200" prefHeight="180">
                     <padding><Insets topRightBottomLeft="20"/></padding>
-                    <Label text="🎯" style="-fx-font-size: 48px;"/>
+                    <Label text="⇄" style="-fx-font-size: 48px;"/>
                     <Label text="Matching" styleClass="card-title">
                         <font><Font size="18" name="System Bold"/></font>
                     </Label>
@@ -69,7 +69,7 @@
                 <VBox fx:id="multipleChoiceCard" styleClass="game-card" alignment="CENTER" spacing="10"
                       onMouseClicked="#startMultipleChoice" prefWidth="200" prefHeight="180">
                     <padding><Insets topRightBottomLeft="20"/></padding>
-                    <Label text="📝" style="-fx-font-size: 48px;"/>
+                    <Label text="☰" style="-fx-font-size: 48px;"/>
                     <Label text="Multiple Choice" styleClass="card-title">
                         <font><Font size="18" name="System Bold"/></font>
                     </Label>
@@ -80,7 +80,7 @@
                 <VBox fx:id="fillInBlankCard" styleClass="game-card" alignment="CENTER" spacing="10"
                       onMouseClicked="#startFillInBlank" prefWidth="200" prefHeight="180">
                     <padding><Insets topRightBottomLeft="20"/></padding>
-                    <Label text="✏️" style="-fx-font-size: 48px;"/>
+                    <Label text="✎" style="-fx-font-size: 48px;"/>
                     <Label text="Fill in the Blank" styleClass="card-title">
                         <font><Font size="18" name="System Bold"/></font>
                     </Label>
